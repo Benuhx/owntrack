@@ -10,14 +10,17 @@ namespace owntrack.Controllers
     [ApiController]
     public class OwntrackController : ControllerBase
     {
+        // Just for testing
         [HttpGet]
         public string Get() {
-            return "Test erfolgreich";
+            return "Server is active";
         }
         
+        // Owntracks sends HTTP Post Request with the schema defined in OwntrackData.cs
+        // Owntrack Docs: https://owntracks.org/booklet/tech/json/
         [HttpPost]
-        public void Post([FromBody] string value) {
-
+        public void Post([FromBody] OwntrackData owntrackData) {
+            
         }        
     }
 }
