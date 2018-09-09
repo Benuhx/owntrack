@@ -16,7 +16,7 @@ namespace owntrack.Controllers
         private readonly ILogger<OwntrackController> logger;
         private readonly MqttClient mqttClient;
         public OwntrackController(ILogger<OwntrackController> logger, ILogger<MqttClient> loggerMqttClient, IOptions<MqttSettings> mqttSettings)
-        {            
+        {
             this.logger = logger;
             this.mqttClient = new MqttClient(loggerMqttClient, mqttSettings.Value);
         }
@@ -30,20 +30,26 @@ namespace owntrack.Controllers
 
         // Owntracks sends HTTP Post Request with the schema defined in OwntrackData.cs
         // Owntrack Docs: https://owntracks.org/booklet/tech/json/
-        [HttpPost]
-        public void Post([FromBody] OwntrackData owntrackData)
+        [HttpPost("{device}")]
+        public IActionResult Post(string device, [FromBody] OwntrackData owntrackData)
         {
             logger.LogInformation("Owntrack HTTP POST request received");
+            if (string.IsNullOrWhiteSpace(device))
+            {
+                return BadRequest("Device string required");
+            }
 
             var mqttMsg = new MqttMessage
             {
-                Topic = "mobile/fire/batteryLevel",
+                Topic = $"mobile/{device}/batteryLevel",
                 Message = Convert.ToString(owntrackData.Batt)
             };
 
             mqttClient.QueueMessage(mqttMsg);
 
             logger.LogInformation("Request done");
+
+            return StatusCode(200);
         }
     }
 }
