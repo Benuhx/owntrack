@@ -19,6 +19,10 @@ namespace owntrack
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .UseKestrel(options =>
+            {
+                options.ListenAnyIP(5000);
+            })
+            .UseStartup<Startup>();
     }
 }
